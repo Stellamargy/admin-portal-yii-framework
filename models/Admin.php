@@ -44,6 +44,8 @@ class Admin extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+   
     public function attributeLabels()
     {
         return [
@@ -55,6 +57,18 @@ class Admin extends \yii\db\ActiveRecord
             'password' => 'Password',
             'profile_id' => 'Profile ID',
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            // Hash the password if it has been changed
+            if ($this->isAttributeChanged('password')) {
+                $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
